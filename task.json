@@ -1,0 +1,13 @@
+[
+  {
+    "id": "51bc11ce-fad0-4a02-9dbb-40f3a6ab1fbf",
+    "enable": false,
+    "content": "每天",
+    "time": "23:59",
+    "label": "默认",
+    "job": [
+      "0"
+    ],
+    "bz": "每日文件备份"
+  }
+]
