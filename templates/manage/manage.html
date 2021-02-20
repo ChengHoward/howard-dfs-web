@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="../../static/layui/assets/images/favicon.ico" rel="icon">
+    <title>任务管理平台</title>
+    <link rel="stylesheet" href="../../static/layui/assets/libs/layui/css/layui.css"/>
+    <link rel="stylesheet" href="../../static/layui/assets/module/admin.css?v=314"/>
+    <link rel="stylesheet" href="../../static/fontawesome-pro-5.12.0/css/all.css"/>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <!-- 头部 -->
+    <div class="layui-header">
+        <div class="layui-logo">
+            <img src="../../static/layui/assets/images/logo.png"/>
+            <cite>统一任务管理平台</cite>
+        </div>
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item" lay-unselect>
+                <a ew-event="flexible" title="侧边伸缩"><i class="layui-icon layui-icon-shrink-right"></i></a>
+            </li>
+            <li class="layui-nav-item" lay-unselect>
+                <a ew-event="refresh" title="刷新"><i class="layui-icon layui-icon-refresh-3"></i></a>
+            </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item" lay-unselect>
+                <a ew-event="note" title="便签"><i class="layui-icon layui-icon-note"></i></a>
+            </li>
+            <li class="layui-nav-item layui-hide-xs" lay-unselect>
+                <a ew-event="fullScreen" title="全屏"><i class="layui-icon layui-icon-screen-full"></i></a>
+            </li>
+            <li class="layui-nav-item" lay-unselect>
+                <a ew-event="theme" title="主题"><i class="layui-icon layui-icon-more-vertical"></i></a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 侧边栏 -->
+    <div class="layui-side">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree arrow2" lay-filter="admin-side-nav" lay-accordion="true"
+                style="margin-top: 15px;">
+                <li class="layui-nav-item">
+                    <a><i class="fa fa-file"></i>&emsp;<cite>文件系统</cite></a>
+                    <dl class="layui-nav-child">
+                        <dd data-name="grid">
+                            <a lay-href="/file_box/"><i class="fal fa-box"></i>&emsp;分区管理</a>
+                        </dd>
+                        <dd data-name="grid">
+                            <a href="javascript:void(0);"><i class="fal fa-box"></i>&emsp;分区<span
+                                    class="layui-nav-more"></span></a>
+                            <dl class="layui-nav-child" id="side-boxs">
+
+                            </dl>
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a lay-href="task"><i class="layui-icon layui-icon-engine"></i>&emsp;<cite>定时任务</cite></a>
+                </li>
+                <li class="layui-nav-item">
+                    <a lay-href="log"><i class="layui-icon layui-icon-log"></i>&emsp;<cite>运行日志</cite></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 主体部分 -->
+    <div class="layui-body"></div>
+    <!-- 底部 -->
+    <div class="layui-footer">
+
+    </div>
+</div>
+
+<!-- 加载动画 -->
+<div class="page-loading">
+    <div class="ball-loader">
+        <span></span><span></span><span></span><span></span>
+    </div>
+</div>
+
+<!-- js部分 -->
+<script type="text/javascript" src="../../static/layui/assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="../../static/layui/assets/js/common.js?v=314"></script>
+<script>
+    layui.use(['index', 'layer', 'element'], function () {
+        var $ = layui.jquery;
+        var index = layui.index;
+        var layer = layui.layer;
+        var element = layui.element;
+        // 默认加载主页
+        index.loadHome({
+            menuPath: 'hello.page',
+            menuName: '<i class="layui-icon layui-icon-home"></i>'
+        });
+        window.getBoxInfo = function () {
+            $.ajax({
+                url: "/file_box/boxs.json",
+                type: "POST",
+                dataType: 'json',
+                success: function (res) {
+                    var $side_boxs = $("#side-boxs");
+                    $side_boxs.empty();
+                    if (res.status) {
+                        for (let i = 0; i < res.data.length; i++) {
+                            var obj = res.data[i]
+                            $side_boxs.append(`<dd data-name="list"><a lay-href="/file_box/content.page?box_id=${obj.box_id}">${obj.box_name}</a></dd>`)
+                        }
+                        element.init();
+                    } else {
+                        layer.msg(res.msg, {icon: 2})
+                    }
+                },
+                error: function () {
+                    layer.msg("服务器连接失败", {icon: 2})
+                },
+                complete: function () {
+                }
+            })
+        }
+        getBoxInfo();
+    });
+</script>
+</body>
+</html>

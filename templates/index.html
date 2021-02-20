@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Unified management system</title>
+
+    <link rel="stylesheet" href="../static/layui/assets/libs/layui/css/layui.css"/>
+    <link rel="stylesheet" href="../static/layui/assets/module/admin.css?v=314"/>
+    <style>
+        .table-a {
+            color: #2196F3 !important;
+            text-decoration: underline !important;
+            cursor: pointer;
+        }
+
+        .table-a i {
+            opacity: 0;
+            transition: 200ms;
+        }
+
+        .table-a:hover i {
+            opacity: 1;
+        }
+
+        .layui-table, .layui-table-view {
+            margin: 0 !important;
+        }
+    </style>
+</head>
+<body>
+<h2>Unified management system</h2>
+<a href="/manager/">服务管理</a>
+</body>
+</html>
+<script type="text/javascript" src="../static/jQuery/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="../static/layui/assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="../static/layui/assets/js/common.js?v=311"></script>
+<script type="text/javascript" src="../static/layui/assets/module/admin.js"></script>
+<script src="../static/layui/assets/libs/echarts/echarts.min.js"></script>
+<script src="../static/layui/assets/libs/echarts/echartsTheme.js"></script>
+<script>
+    layui.use(["layer", "element", "table", "admin"], function () {
+        var element = layui.element;
+        var table = layui.table;
+        var admin = layui.admin;
+        var layer = layui.layer;
+    })
+</script>

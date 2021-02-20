@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="../../../static/layui/assets/libs/layui/css/layui.css"/>
+    <link rel="stylesheet" href="../../../static/fontawesome-pro-5.12.0/css/all.css">
+    <link rel="stylesheet" href="../../../static/materialize/css/materialize.css">
+    <!--    <link rel="stylesheet" href="../../../static/layui/assets/module/admin.css?v=314">-->
+</head>
+<body>
+<div class="layui-tab" id="app">
+    <ul class="layui-tab-title">
+        <li class="layui-this">接口</li>
+        <li>Java</li>
+    </ul>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <div class="layui-container card-panel" v-for="item in items">
+                <h3 v-text="item.title"></h3>
+                <blockquote>
+                    <p class="big" v-for="obj in item.urls"><span class="layui-badge layui-bg-blue" style="margin: 4px;margin-left: 0" v-for="m in obj.method" v-text="m"></span><span v-text="obj.url"></span></p>
+                </blockquote>
+                <h5>参数</h5>
+                <table class="layui-table ">
+                    <tr>
+                        <th style="text-align: center !important;">参数名</th>
+                        <th style="text-align: center !important;">参数类型</th>
+                        <th style="text-align: center !important;">必要</th>
+                        <th style="text-align: center !important;">描述</th>
+                    </tr>
+                    <tr v-for="obj in item.parameter">
+                        <td class="center-align" v-text="obj.name"></td>
+                        <td class="center-align" v-text="obj.type"></td>
+                        <td class="center-align"><i class="fad fa-check-circle" v-show="obj.requisite" /></td>
+                        <td class="center-align" v-text="obj.mark"></td>
+                    </tr>
+                </table>
+                <h5>接口</h5>
+                <blockquote>
+                    <p class="big" v-for="url in item.gen_urls" v-text="url"></p>
+                </blockquote>
+                <h5>返回数据</h5>
+                <pre class="layui-code">
+<code v-text="item.res"></code>
+</pre>
+            </div>
+        </div>
+        <div class="layui-tab-item">
+            <h3>方案一</h3>
+            <blockquote>
+                <p>通过配置文件`application.properties`注入</p>
+            </blockquote>
+            <pre class="layui-code">
+                <code>
+// Controller
+private UnifiedFileManager ufm_xxx = new UnifiedFileManager(
+            ConfigUtil.getString("xxx_filemanager_read_key"),
+            ConfigUtil.getString("xxx_filemanager_write_key"));
+// application.properties
+xxx_filemanager_read_key = {{key_id}}
+xxx_filemanager_write_key = {{key_id}}
+                </code>
+            </pre>
+            <h3>方案二</h3>
+            <blockquote>
+                <p>直接使用Key</p>
+            </blockquote>
+            <pre class="layui-code">
+                <code>
+// Controller
+private UnifiedFileManager ufm_xxx = new UnifiedFileManager(
+            ConfigUtil.getString("{{key_id}}"),
+            ConfigUtil.getString("{{key_id}}"));
+                </code>
+            </pre>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript" src="../../../static/jQuery/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="../../../static/layui/assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="../../../static/layui/assets/js/common.js?v=314"></script>
+<script type="text/javascript" src="../../../static/layui/assets/module/xm-select.js"></script>
+<script src="../../../static/vue/vue.js"></script>
+
+<script>
+    var vue = new Vue({
+    el: "#app",
+        data: {
+            items: [
+                {
+                    title:"文件上传",
+                    urls: [{
+                        method: ["POST"],
+                        url: "http://ip:port/gateway/upload/<key>"
+                    }],
+                    parameter: [
+                        {
+                            name: "key",
+                            type: "String(36)",
+                            requisite: true,
+                            mark: "密钥"
+                        },
+                        {
+                            name: "file",
+                            type: "File(∞)",
+                            requisite: true,
+                            mark: "要上传的文件"
+                        },
+                        {
+                            name: "rel",
+                            type: "String(36)",
+                            requisite: false,
+                            mark: "自定义ID，唯一"
+                        },
+                        {
+                            name: "index",
+                            type: "String(128)",
+                            requisite: false,
+                            mark: "相当于关联ID"
+                        },
+                        {
+                            name: "filename",
+                            type: "String(128)",
+                            requisite: false,
+                            mark: "自定义文件名"
+                        },
+                    ],
+                    gen_urls: [
+                        "{{info.host_url}}gateway/upload/{{key_id}}"
+                    ],
+                    res: `{
+    "data": {
+        "file_id": "f98f44c7-06c0-438b-a6da-6ef55ffecc98",
+        "rel": null
+    },
+    "msg": "上传成功",
+    "status": true
+}`
+                },
+                {
+                    title:"文件下载",
+                    urls: [{
+                        method: ["GET"],
+                        url: "http://ip:port/gateway/download/by_id/<key>/<file_id>"
+                    },{
+                        method: ["GET"],
+                        url: "http://ip:port/gateway/download/by_rel/<key>/<file_id>"
+                    }],
+                    parameter: [
+                        {
+                            name: "key",
+                            type: "String(36)",
+                            requisite: true,
+                            mark: "密钥"
+                        },
+                        {
+                            name: "fileid/rel",
+                            type: "String(36)/String(36)",
+                            requisite: true,
+                            mark: "二选一，必填"
+                        }
+                    ],
+                    gen_urls: [
+                        "{{info.host_url}}gateway/download/by_id/{{key_id}}/",
+                        "{{info.host_url}}gateway/download/by_rel/{{key_id}}/"
+                    ],
+                    res: `
+<返回文件对象>
+                    `
+                },
+                {
+                    title:"查看文件列表",
+                    urls: [{
+                        method: ["POST"],
+                        url: "http://ip:port/gateway/list/by_key/<key>"
+                    }],
+                    parameter: [
+                        {
+                            name: "key",
+                            type: "String(36)",
+                            requisite: true,
+                            mark: "密钥"
+                        },
+                        {
+                            name: "index",
+                            type: "String(128)",
+                            requisite: false,
+                            mark: "相当于关联ID"
+                        }
+                    ],
+                    gen_urls: [
+                        "{{info.host_url}}gateway/list/by_key/{{key_id}}",
+                    ],
+                    res: `[
+    {
+        "file_name": "ABT7D578381B8556DA8347539E346E08039A5623137E8E3D18E6DD216803D28BF99.jfif",
+        "file_size": "870.7KB",
+        "file_suffix": ".jfif",
+        "id": "571f2a18-56e7-464d-ab6a-926116dfb49d",
+        "index": "default",
+        "rel": null
+    },...
+}`
+                },
+                {
+                    title:"删除文件（逻辑）",
+                    urls: [{
+                        method: ["POST"],
+                        url: "http://ip:port/gateway/delete/by_id/<key>",
+                        url: "http://ip:port/gateway/delete/by_rel/<key>"
+                    }],
+                    parameter: [
+                        {
+                            name: "key",
+                            type: "String(36)",
+                            requisite: true,
+                            mark: "密钥"
+                        },
+                        {
+                            name: "file_id",
+                            type: "String(36)",
+                            requisite: false,
+                            mark: "文件id"
+                        },
+                        {
+                            name: "rel",
+                            type: "String(36)",
+                            requisite: false,
+                            mark: "自定义文件id"
+                        },
+                        {
+                            name: "index",
+                            type: "String(128)",
+                            requisite: false,
+                            mark: "相当于关联ID"
+                        }
+                    ],
+                    gen_urls: [
+                        "{{info.host_url}}gateway/delete/by_id/{{key_id}}",
+                        "{{info.host_url}}gateway/delete/by_rel/{{key_id}}",
+                    ],
+                    res: `无`
+                },
+            ]
+        }
+    })
+    //注意：选项卡 依赖 element 模块，否则无法进行功能性操作
+    layui.use('element', 'code', function () {
+        var element = layui.element;
+        layui.code({
+            title: 'NotePad++的风格'
+            , skin: 'notepad'
+        });
+    });
+</script>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../static/layui/assets/libs/layui/css/layui.css"/>
+    <link rel="stylesheet" href="../../../static/layui/assets/module/admin.css?v=314">
+    <style>
+        [data-type] .content {
+            /* max-width: 138px; */
+            background: transparent;
+            width: 125px;
+            height: 125px;
+            padding: 15px;
+        }
+
+        [data-type] .content:hover {
+            background: #0000002e;
+        }
+
+        [data-type] .content img {
+            max-height: 100%;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <button type="button" class="layui-hide" id="test1"></button>
+            <div class="layui-fluid">
+                <div id="fileManager" lay-filter="test"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- js部分 -->
+<script type="text/javascript" src="../../../static/jQuery/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="../../../static/layui/assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="../../../static/layui/assets/js/common.js?v=314"></script>
+<script type="text/javascript" src="../../../static/layui/assets/module/xm-select.js"></script>
+</body>
+</html>
+<script>
+    layui.extend({'fileManager': 'ext/fileManager'});
+    layui.use(['layer', 'form', 'table', 'util', 'laydate', 'element', 'layedit', 'fileManager', 'upload'], function () {
+        var element = layui.element;
+        element.on('tab(demo1)', function (data) {
+            console.log(data);
+        });
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var admin = layui.admin;
+        var layedit = layui.layedit;
+
+        var fileManager = layui.fileManager
+            , upload = layui.upload
+        $('title').html($('title').html() + ' version:' + fileManager.v);
+        var upIns = upload.render({
+            elem: '#test1' //绑定元素
+            , url: 'data.php?action=upload' //上传接口
+            , field: 'file[]'
+        })
+        fileManager.render({
+            elem: '#fileManager'
+            , method: 'post'
+            , id: 'fmTest'
+            , btn_upload: false
+            , btn_create: false
+            , url: 'ls/{{box_id}}.json'
+            // , thumb: {'nopic': '/filemanage/upload/null-100x100.jpg', 'width': 100, 'height': 100}
+            // , parseData: function (res) {
+            /*
+            data:[{
+                thumb:文件地址用于显示
+                ,type:文件类型  directory文件夹,png|gif|png|image图片,其它任意
+                ,path:文件夹路径用于打开本文件夹
+            }]
+            */
+            //     let _res = [];
+            //     _res.code = 0;
+            //     _res.data = res.images;
+            //     _res.count = res.count
+            //     return _res;
+            // }
+            , done: function (res, curr, count) {
+                // console.log(res,curr,count)
+            }
+            , page: {limit: 30}
+            // , page: false
+            , where: {}
+        });
+        //监听图片选择事件
+        fileManager.on('pic(test)', function (obj) {
+            //obj.obj 当前对象
+            //obj.data 当前图片数据
+            var data = obj.data;
+            // layer.alert(JSON.stringify(data), {
+            //     title: '当前数据：'
+            // });
+            layer.open({
+                type: 2,
+                title: '预览',
+                shadeClose: true,
+                shade: 0.8,
+                area: ['90%', '90%'],
+                content: 'view.page?box_id={{box_id}}&file_id=' + data.file_id //iframe的url
+            });
+        });
+        //监听图片上传事件
+        fileManager.on('uploadfile(test)', function (obj) {
+            //obj.obj 当前对象
+            //obj.path 路径
+            //更改上传组件参数
+            upIns.config.data = {'path': obj.path};
+            upIns.config.done = function (res) {
+                fileManager.reload('fmTest');
+            }
+            var e = document.createEvent("MouseEvents");
+            e.initEvent("click", true, true);
+            document.getElementById("test1").dispatchEvent(e)
+        });
+        //监听新建文件夹事件
+        fileManager.on('new_dir(test)', function (obj) {
+            //obj.obj 当前对象
+            //obj.folder 文件夹名称
+            //obj.path 路径
+            e = JSON.parse(e);
+            $.post('data.php?action=folder', {'folder': obj.folder, 'path': obj.path}, function (e) {
+                layer.msg(e.msg);
+                if (e.code == 1) {
+                    fileManager.reload('fmTest');
+                }
+            })
+        });
+
+    })
+
+</script>

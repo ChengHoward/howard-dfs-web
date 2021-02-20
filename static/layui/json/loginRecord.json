@@ -1,0 +1,117 @@
+{
+  "code": 0,
+  "msg": "",
+  "count": 1070,
+  "data": [
+    {
+      "id": 880,
+      "userId": 1,
+      "osName": "Mac OS X",
+      "device": "Mac OS X",
+      "browserType": "Chrome",
+      "ipAddress": "124.16.4.11",
+      "createTime": "2019-03-04T17:51:13",
+      "username": "admin",
+      "nickName": "管理员"
+    },
+    {
+      "id": 879,
+      "userId": 1,
+      "osName": "Windows 10",
+      "device": "Windows 10",
+      "browserType": "Chrome",
+      "ipAddress": "182.242.114.157",
+      "createTime": "2019-03-04T17:42:34",
+      "username": "admin",
+      "nickName": "管理员"
+    },
+    {
+      "id": 878,
+      "userId": 1,
+      "osName": "Windows 7",
+      "device": "Windows 7",
+      "browserType": "Chrome",
+      "ipAddress": "113.116.53.92",
+      "createTime": "2019-03-04T17:29:42",
+      "username": "admin",
+      "nickName": "管理员"
+    },
+    {
+      "id": 877,
+      "userId": 1,
+      "osName": "Windows 7",
+      "device": "Windows 7",
+      "browserType": "Internet Explorer 11",
+      "ipAddress": "60.171.153.102",
+      "createTime": "2019-03-04T17:00:44",
+      "username": "admin",
+      "nickName": "管理员"
+    },
+    {
+      "id": 876,
+      "userId": 1,
+      "osName": "Windows 7",
+      "device": "Windows 7",
+      "browserType": "Internet Explorer 11",
+      "ipAddress": "117.136.31.223",
+      "createTime": "2019-03-04T16:59:59",
+      "username": "admin",
+      "nickName": "管理员"
+    },
+    {
+      "id": 875,
+      "userId": 1,
+      "osName": "Linux",
+      "device": "Linux",
+      "browserType": "Chrome",
+      "ipAddress": "218.18.76.100",
+      "createTime": "2019-03-04T16:59:11",
+      "username": "admin",
+      "nickName": "管理员"
+    },
+    {
+      "id": 874,
+      "userId": 2,
+      "osName": "Windows 7",
+      "device": "Windows 7",
+      "browserType": "Internet Explorer 11",
+      "ipAddress": "111.8.57.60",
+      "createTime": "2019-03-04T16:53:24",
+      "username": "user01",
+      "nickName": "用户一"
+    },
+    {
+      "id": 873,
+      "userId": 1,
+      "osName": "Windows 7",
+      "device": "Windows 7",
+      "browserType": "Internet Explorer 11",
+      "ipAddress": "111.8.57.60",
+      "createTime": "2019-03-04T16:53:01",
+      "username": "admin",
+      "nickName": "管理员"
+    },
+    {
+      "id": 872,
+      "userId": 1,
+      "osName": "Windows 10",
+      "device": "Windows 10",
+      "browserType": "Chrome",
+      "ipAddress": "58.56.96.28",
+      "createTime": "2019-03-04T16:43:05",
+      "username": "admin",
+      "nickName": "管理员"
+    },
+    {
+      "id": 871,
+      "userId": 1,
+      "osName": "Windows 7",
+      "device": "Windows 7",
+      "browserType": "Internet Explorer 11",
+      "ipAddress": "111.8.57.60",
+      "createTime": "2019-03-04T16:40:13",
+      "username": "admin",
+      "nickName": "管理员"
+    }
+  ]
+}

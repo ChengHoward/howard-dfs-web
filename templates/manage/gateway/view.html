@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body, html, .container {
+            width: 100%;
+            overflow: hidden;
+            height: 100%;
+            background: black;
+        }
+
+        .img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+    <link rel="stylesheet" href="../../../static/videojs/video-js.min.css">
+</head>
+<body>
+{% if info.file.file_type in ["jpg","png","jfif"] %}
+<div class="container">
+    <link rel="stylesheet" href="../../../static/img.js/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../static/img.js/default.css">
+    <link rel="stylesheet" href="../../../static/img.js/mag.css">
+    <link rel="stylesheet" href="../../../static/img.js/index.css">
+    <script src="../../../static/jQuery/jquery-1.11.0.min.js"></script>
+    <script src="../../../static/img.js/jquery.bridget.js"></script>
+    <script src="../../../static/img.js/jquery.mousewheel.min.js"></script>
+    <script src="../../../static/img.js/jquery.event.drag.js"></script>
+    <script src="../../../static/img.js/screenfull.js"></script>
+    <script src="../../../static/img.js/PreventGhostClick.js"></script>
+    <script src="../../../static/img.js/hammer.min.js"></script>
+    <script src="../../../static/img.js/mag.js"></script>
+    <script src="../../../static/img.js/mag-analytics.js"></script>
+    <script src="../../../static/img.js/mag-control.js"></script>
+    <script src="../../../static/img.js/mag-jquery.js"></script>
+    <div mag-thumb="drag">
+        <img src="{{info.file.file_gateway}}" class="img" style="height:50%;width: unset;"/>
+    </div>
+<!--    <div mag-zoom="drag">-->
+<!--        <img src="{{info.file.file_gateway}}" class="img" style="height:100%;width: unset;"/>-->
+<!--    </div>-->
+    <!--    <div class="img" style="background-image: url('{{info.file.file_gateway}}')"></div>-->
+    <script>
+        (function () {
+            var $host;
+            var $controls;
+            var $hud;
+
+            $host = $('[mag-thumb="drag"]');
+            $host.mag({
+                position: 'drag',
+                // position: false,
+                toggle: false,
+                zoomMin: 0,
+                // initial:0
+            });
+
+            $hudLeft = $('<div class="mag-eg-hud mag-eg-hud-left"></div>');
+            $hudLeft.appendTo($host.parent());
+
+            $hudRight = $('<div class="mag-eg-hud mag-eg-hud-right"></div>');
+            $hudRight.appendTo($host.parent());
+
+            var toPerc = function (p) {
+                return (p * 100).toFixed(1) + '%';
+            };
+
+            $host.on('compute', function (e) {
+                var mag = $(this).data('mag');
+                var m = mag.model;
+                $hudLeft.html(
+                    '<div>' + m.zoom.toFixed(1) + 'x</div>'
+                );
+                $hudRight.html(
+                    '<div>(' + toPerc(m.focus.x) + ', ' + toPerc(m.focus.y) + ')</div>'
+                );
+            });
+        })();
+    </script>
+</div>
+{% elif info.file.file_type in ["mp4"] %}
+<script src="../../../static/videojs/video.js"></script>
+<script src="../../../static/videojs/flv.min.js"></script>
+<script src="../../../static/videojs/videojs-flvjs.min.js"></script>
+<div class="container">
+    <video style="width: 100%;height: 100%;"
+           id="my-player"
+           class="video-js"
+           controls
+           preload="auto"
+           poster="">
+        <source src="{{info.file.file_gateway}}" type="video/mp4">
+    </video>
+</div>
+<script>
+    var player = videojs('my-player', {
+        techOrder: ['html5', 'flvjs'],
+        flvjs: {
+            mediaDataSource: {
+                isLive: false,
+                cors: true,
+                withCredentials: false,
+            },
+        },
+        autoplay: true,
+        poster: "",
+        controls: true,
+        preload: "none",
+        // sources: [{
+        //     src: '{{info.file.file_gateway}}',
+        //     type: 'video/mp4'
+        // }]
+    }, function onPlayerReady() {
+        this.play();
+        this.on('ended', function () {
+            videojs.log('Awww...over so soon?!');
+        });
+    });
+</script>
+{% elif info.file.file_type in ["pdf"] %}
+<div class="container">
+    <script>
+        window.location.href = '/static/pdfjs/web/viewer.html?file='+encodeURI("{{info.file.file_gateway}}")
+    </script>
+</div>
+{% else %}
+<div style="width: 100%;position: absolute;top: 50%;left: 50%;transform: translate(-50%,-50%);">
+    <div style="background-image: url('/gateway/ico/{{info.file.file_type}}.png');background-size: 100% 100%;width: 60px;height: 60px;margin: auto;"></div>
+<h1 style="width: 100%;color: white;text-align: center;">当前文件暂不支持在线预览</h1>
+</div>
+{% endif %}
+</body>
+</html>

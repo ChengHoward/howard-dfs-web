@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../static/layui/assets/libs/layui/css/layui.css"/>
+    <link rel="stylesheet" href="../../../static/layui/assets/module/admin.css?v=314">
+
+</head>
+<body>
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <div class="layui-form toolbar">
+                <form action="#" id="form_btnQuery" class="">
+                    <div class="row">
+                        <div class="layui-inline" style="float:right;padding-bottom: 8px;">
+                            <a id="addBox" class="layui-btn icon-btn"><i class="layui-icon">&#xe654;</i>新分区</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <table class="layui-table" id="taskTable" lay-filter="taskTable"></table>
+        </div>
+    </div>
+    <button class="layui-btn layui-hide" id="uploadxz"><i class="layui-icon">&#x1005</i>选择</button>
+    <button class="layui-btn layui-hide" id="uploadbtn"><i class="layui-icon">&#x1005</i>确定</button>
+</div>
+<!-- js部分 -->
+<script type="text/javascript" src="../../../static/jQuery/jquery-3.3.1.js"></script>
+<script type="text/javascript" src="../../../static/layui/assets/libs/layui/layui.js"></script>
+<script type="text/javascript" src="../../../static/layui/assets/js/common.js?v=314"></script>
+<script type="text/javascript" src="../../../static/layui/assets/module/xm-select.js"></script>
+<script type="text/html" id="addBoxModel">
+    <form id="modelBoxForm" lay-filter="modelBoxForm" style="display: inline;margin: 0px;padding: 0px;"
+          class="layui-form model-form">
+        <div style="margin: 0px;padding: 0px;height: calc(100% - 2px);" class="layui-tab layui-tab-card"
+             lay-filter="demo1">
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <div class="layui-card">
+                        <div class="layui-card-header" style="font-size:16px;font-weight:bold;margin-left:-3.5%;">
+                            分区信息<label class="layui-form-label"></label></div>
+                        <div class="layui-card-body">
+                            <div class="layui-form">
+                                <input type="hidden" name="box_id" value="">
+                                <div class="layui-row">
+                                    <div class="layui-col-xs8">
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">分区名</label>
+                                            <div class="layui-input-block">
+                                                <input name="box_name" lay-verify="required" maxlength="40"
+                                                       id="box_name" class="layui-input"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="layui-col-xs4">
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">状态</label>
+                                            <div class="layui-input-block">
+                                                <input type="checkbox" id="form_enable" lay-filter="form_enable"
+                                                       checked="checked"
+                                                       name="enable" lay-skin="switch" lay-text="启用|禁用"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-row">
+                                    <div class="layui-col-xs12">
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">物理路径</label>
+                                            <div class="layui-input-block">
+                                                <div id="path-select" class="path-select"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="layui-row">
+                                    <div class="layui-col-xs12">
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">备注</label>
+                                            <div class="layui-input-block">
+                                                <textarea name="mark" rows="8" required cols="40" id="bz"
+                                                          class="layui-textarea" lay-verify="bz"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-footer"
+                         style="position: absolute;bottom: 0;right: 0;padding-right: 26px;left: 0;">
+                        <div class="layui-form-item text-right">
+                            <button class="layui-btn" lay-filter="modelSubmit" lay-submit>创建</button>
+                            <button class="layui-btn layui-btn-primary" type="button" ew-event="closePageDialog">取消
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/html" id="boxTableBar">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="keys">授权</a>
+    {{'{{# if(d.enable){ }}'|safe}}
+    <a class="layui-btn layui-btn-danger layui-btn-xs layui-disabled" disabled>删除</a>
+    {{'{{# }else{ }}'|safe}}
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    {{'{{# } }}'|safe}}
+</script>
+</body>
+</html>
+<script>
+    layui.use(['layer', 'form', 'table', 'util', 'laydate', 'element', 'layedit'], function () {
+        var element = layui.element;
+        element.on('tab(demo1)', function (data) {
+            console.log(data);
+        });
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var form = layui.form;
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var admin = layui.admin;
+        var layedit = layui.layedit;
+
+        window.getBoxInfo = function () {
+            try {
+                window.parent.window.getBoxInfo();
+            } catch (e) {
+            }
+        }
+        var insTb = table.render({
+            elem: '#taskTable',
+            url: 'boxs.json',
+            page: false,
+            cols: [[
+                {type: 'numbers', title: '序号'},
+                {field: 'box_id', title: '分区id', width: 280},
+                {field: 'box_name', title: '分区名称'},
+                {field: 'box_mark', title: '备注'},
+                {field: 'box_path', title: '物理路径'},
+                {
+                    field: 'keys', title: '密钥', templet(d) {
+                        return `${d.keys.length}个`;
+                    }
+                },
+                {
+                    title: '状态', width: 100, align: 'center', templet: function (d) {
+                        if (d.enable) {
+                            return '<input type="checkbox" value="' + d.box_id + '" id="enable" lay-filter="enable" checked="checked" name="enable" lay-skin="switch" lay-text="启用|禁用"'
+                        } else {
+                            return '<input type="checkbox" value="' + d.box_id + '" id="enable" lay-filter="enable" name="enable" lay-skin="switch" lay-text="启用|禁用"'
+                        }
+                    }
+                },
+                {align: 'center', toolbar: '#boxTableBar', width: 200, title: '操作'}
+            ]],
+            // page: {
+            //     count: 100, //总条数
+            //     limit: 10,//每页显示数量
+            //     limits: [10, 20, 50, 100, 200],//选择每页数目
+            //     groups: 5, //连续出现的页码个数
+            //     prev: '<',
+            //     next: '>',
+            //     first: '首页',
+            //     last: '尾页',
+            //     layout: ['count', 'prev', 'page', 'next', 'limit', 'skip'],
+            // },
+        });
+        table.on('tool(taskTable)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            if (layEvent === 'edit') { // 修改
+                admin.open({
+                    type: 1,
+                    title: ['修改分区信息', "font-weight:bold;"],
+                    content: $('#addBoxModel').html(),
+                    offset: '-1px',
+                    area: ['1000px', '500px'],
+                    success: function (layero, dIndex) {
+                        form.val('modelBoxForm', data);
+                        window.getDiskTree({
+                            init: true,
+                            box_path: data.box_path
+                        }, function (data) {
+                            xmSelect.render({
+                                el: '#path-select',
+                                radio: true,
+                                name: 'box_path',
+                                layVerify: 'required',
+                                layVerType: '请选择存储路径',
+                                disabled: true,
+                                strict: true,
+                                simple: false,
+                                clickClose: true,
+                                model: {
+                                    icon: true,
+                                    label: {
+                                        type: 'value',
+                                        value: {
+                                            template(data, sels) {
+                                                return `<div style="color: green;">${sels[0].value}</div>`
+                                            }
+                                        },
+                                    }
+                                },
+                                tree: {
+                                    show: true,
+                                    radio: true,
+                                    expandedKeys: [-1],
+                                    //开启懒加载
+                                    lazy: true,
+                                    //加载方法
+                                    load: function (item, cb) {
+                                        window.getDiskTree({div_path: item.value}, cb)
+                                    }
+                                },
+                                data: data
+                            })
+                        })
+                        form.on('submit(modelSubmit)', function (obj) {
+                            // console.log(obj.field)
+                            var mindex = layer.alert("正在创建分区...", {icon: 1, closeBtn: 0, btn: []})
+                            $.ajax({
+                                url: "editBox.json",
+                                type: "POST",
+                                data: obj.field,
+                                dataType: 'json',
+                                success: function (res) {
+                                    if (res.status) {
+                                        layer.close(dIndex)
+                                        layer.msg(res.msg, {icon: 1})
+                                        window.getBoxInfo();
+                                    } else {
+                                        layer.msg(res.msg, {icon: 2})
+                                    }
+                                },
+                                error: function () {
+                                    layer.msg("服务器连接失败", {icon: 2})
+                                },
+                                complete: function () {
+                                    layer.close(mindex)
+                                    insTb.reload({});
+                                }
+                            })
+                            return false;
+                        })
+                    }
+                });
+            } else if (layEvent === 'del') { // 删除
+                layer.confirm('确认删除吗?', {skin: "myskin"}, function (index) {
+                    var mindex = layer.alert("正在删除分区...", {icon: 1, title: "请稍后", closeBtn: 0, btn: []})
+                    $.ajax({
+                        url: 'delBox.json',
+                        type: 'POST',
+                        data: {"box_id": data.box_id},
+                        dataType: 'json',
+                        success: function (res) {
+                            if (res.status) {
+                                layer.msg(res.msg, {icon: 1})
+                                window.getBoxInfo();
+                            } else {
+                                layer.msg(res.msg, {icon: 2})
+                            }
+                        },
+                        error: function () {
+                            layer.msg("服务器连接失败", {icon: 2})
+                        },
+                        complete: function () {
+                            layer.close(mindex)
+                            insTb.reload({});
+                        }
+                    });
+                });
+            } else if (layEvent === 'keys') {
+                layer.open({
+                    type: 2,
+                    title: '密钥管理',
+                    shadeClose: true,
+                    shade: 0.8,
+                    area: ['90%', '90%'],
+                    content: `keys.page?box_id=${data.box_id}`
+                });
+            }
+        });
+        form.on("switch(enable)", function (obj) {
+            var contexts;
+            var sar;
+            var x = obj.elem.checked;
+            var id = obj.elem.value;
+            var mindex = layer.alert(`正在${!x ? "禁用" : "启用"}`, {icon: 1, title: "请稍后", closeBtn: 0, btn: []})
+            $.ajax({
+                url: "enable.json",
+                type: "POST",
+                data: {
+                    box_id: id,
+                    enable: x ? true : undefined
+                },
+                dataType: 'json',
+                success: function (res) {
+                    if (res.status) {
+                        layer.msg(res.msg, {icon: 1})
+                    } else {
+                        layer.msg(res.msg, {icon: 2})
+                    }
+                },
+                error: function () {
+                    layer.msg("服务器连接失败", {icon: 2})
+                },
+                complete: function () {
+                    layer.close(mindex)
+                    insTb.reload({});
+                }
+            })
+        })
+        window.getDiskTree = function (data, callback) {
+            $.ajax({
+                url: "/file_box/disk.json",
+                type: "POST",
+                data: data,
+                dataType: 'json',
+                success: function (res) {
+                    if (res.status) {
+                        if (callback) callback(res.data)
+                    } else {
+                        layer.msg(res.msg, {icon: 2})
+                    }
+                },
+                error: function () {
+                    layer.msg("服务器连接失败", {icon: 2})
+                },
+                complete: function () {
+                }
+            })
+        }
+        $('#addBox').click(function () {
+            admin.open({
+                type: 1,
+                title: ['创建新分区', "font-weight:bold;"],
+                content: $('#addBoxModel').html(),
+                offset: '-1px',
+                area: ['1000px', '500px'],
+                success: function (layero, dIndex) {
+                    form.render();
+                    window.getDiskTree({}, function (data) {
+                        xmSelect.render({
+                            el: '#path-select',
+                            radio: true,
+                            name: 'box_path',
+                            layVerify: 'required',
+                            layVerType: '请选择存储路径',
+                            strict: true,
+                            simple: false,
+                            clickClose: true,
+                            model: {
+                                icon: true,
+                                label: {
+                                    type: 'value',
+                                    value: {
+                                        template(data, sels) {
+                                            return `<div style="color: green;">${sels[0].value}</div>`
+                                        }
+                                    },
+                                }
+                            },
+                            tree: {
+                                show: true,
+                                radio: true,
+                                expandedKeys: [-1],
+                                //开启懒加载
+                                lazy: true,
+                                //加载方法
+                                load: function (item, cb) {
+                                    window.getDiskTree({
+                                        box_path: item.value
+                                    }, cb)
+                                }
+                            },
+                            data: data
+                        })
+                    })
+                    form.on('submit(modelSubmit)', function (obj) {
+                        console.log(obj.field)
+                        var mindex = layer.alert("正在创建分区...", {icon: 1, closeBtn: 0, btn: []})
+                        $.ajax({
+                            url: "addBox.json",
+                            type: "POST",
+                            data: obj.field,
+                            dataType: 'json',
+                            success: function (res) {
+                                if (res.status) {
+                                    layer.close(dIndex)
+                                    layer.msg(res.msg, {icon: 1})
+                                    window.getBoxInfo();
+                                } else {
+                                    layer.msg(res.msg, {icon: 2})
+                                }
+                            },
+                            error: function () {
+                                layer.msg("服务器连接失败", {icon: 2})
+                            },
+                            complete: function () {
+                                layer.close(mindex)
+                                insTb.reload({});
+                            }
+                        })
+                        return false;
+                    })
+                }
+            });
+        });
+
+    })
+
+</script>
