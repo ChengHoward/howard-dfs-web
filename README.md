@@ -26,11 +26,16 @@
 
 ### 运行
 ``` cmd
-# cmd
+# Windows Cmd
+# 安装virtualenv模块
 pip3 install virtualenv
+# 创建虚拟环境
 virtualenv env_dfs
+# 打开虚拟环境
 "./env_dfs/Scripts/activate"
+# 安装项目模块
 pip3 install -r requirements.txt
+# 启动项目
 python app.py
 ```
 
