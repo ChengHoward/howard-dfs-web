@@ -24,6 +24,25 @@
 3.文件删除
 - [x] 通过分区ID和Key对文件进行删除操作
 
+### 运行
+``` cmd
+# cmd
+pip3 install virtualenv
+virtualenv env_dfs
+"./env_dfs/Scripts/activate"
+pip3 install -r requirements.txt
+python app.py
+```
+
+### 提示
+SQLAlchemy会自动生成表结构，请自行创建数据库和足够权限的用户
+数据库连接地址在[config.conf](https://github.com/tt20050510/howard-dfs-web/blob/main/config.conf)文件`[db]`中配置
+
+
+### 环境
+[Python 3.6.x](https://www.python.org/)
+Mysql8 (可以切换其它版本或数据库)
+
 ### 前端
 |[Layui](https://github.com/sentsin/layui)|
 |[Jquery](https://github.com/jquery/jquery)|
